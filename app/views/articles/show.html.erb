@@ -1,0 +1,28 @@
+<section class="post-content-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 post-title-block">
+        <%= image_tag @article.attachment.attached? ? @article.attachment.service_url : "default_blog.png",size: "50x50",class: "position-absolute" %>
+        <h1 class="text-center"><%= @article.title  %></h1>
+        <div class="list-inline text-center">
+            <span><b>Published by: </b><%= @article.user.name %> |</span>
+            <span><b>Published on: </b><%= @article.created_at %> </span>
+        </ul>
+      </div>
+      <div class="col-lg-9 col-md-9 col-sm-12">
+        <%= sanitize @article.content %>
+      </div>
+    </div>
+  </div>
+</section>
+<hr/><h3><b>Comments</b></h3><hr/>
+<div class="container">
+<div data-id="link-wrap">
+  <%= render(@comments) %>
+</div>
+<% if @comments.next_page %>
+  <div data-id="comment-more">
+    <%= link_to 'Load More', load_comments_article_path(page: @comments.next_page), remote: true,data: {id: "next-page"} %>
+  </div>
+<% end %>
+</div>

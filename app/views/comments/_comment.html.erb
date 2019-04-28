@@ -1,0 +1,28 @@
+<% is_parent_comment = comment.parent_comment_id.blank? %>
+<% comment_replies = Comment.replies(comment.id,params[:parent_page] || 1) %>
+<div data-id="comment-wrapper-<%= comment.id %>">
+  <div class="row <%= is_parent_comment ? '' : 'offset-md-1' %>">
+    <div class="col-6">
+      <%= image_tag comment.user.avatar.attached? ? comment.user.avatar : "default_user.jpeg",size: "30x30",class: "mr-2" %>
+      <%= comment.user.name %>
+    </div>
+    <div class="col-6"> Posted <%= time_ago_in_words(comment.created_at) %> ago.</div>
+  </div>
+  <div class="<%= is_parent_comment ? '' : 'offset-md-1' %>">
+    <div class="col-10"><%= sanitize comment.content %></div>
+  </div>
+  <%= local_assigns.has_key?(:recursive) %>
+  <% unless local_assigns.has_key?(:recursive) %>
+    <div data-id="link-wrap-<%= comment.id %>">
+      <%= render partial: 'comments/comment', collection: comment_replies,locals: { recursive: true} %>   
+    </div>
+    <% if comment_replies.present? %>
+      <div class="<%= is_parent_comment ? '' : 'offset-md-1' %>" data-id="comment-more-<%= comment.id %>">
+        <%= link_to 'Load More', load_comments_article_path(parent_comment_id: comment.id,parent_page: comment_replies.next_page), remote: true,data: {id: "next-page-#{comment.id}"} %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+<% if is_parent_comment %>
+<hr>
+<% end %>
