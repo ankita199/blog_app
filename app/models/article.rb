@@ -11,6 +11,6 @@ class Article < ApplicationRecord
   validates :attachment, presence: true
 
   def attachment_image
-    attachment.attached? ? attachment : "default_blog.png"
+    attachment.attached? ? attachment : "default_blog.png" rescue "default_blog.png"
   end
 end

@@ -44,11 +44,10 @@ class UsersController < ApplicationController
     if admin_user
       User.find(params[:id]).destroy
       flash[:success] = "User deleted"
-      redirect_to users_url
     else
       flash[:error] = "Unauthorized!."
-      redirect_to root_url
     end
+    redirect_to root_url
   end
   
   private
