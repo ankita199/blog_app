@@ -2,7 +2,7 @@
 <div data-id="comment-wrapper-<%= comment.id %>">
   <div class="row align-items-center <%= is_parent_comment ? '' : 'offset-md-1' %>">
     <div class="col-4">
-      <%= image_tag comment.user.avatar_image,{ size: User::SIZE[:small],class: "mr-2"} %>
+      <%= image_tag comment.user.avatar_image,size: User::SIZE[:small],class: "mr-2" %>
       <%= comment.user.name %>
     </div>
     <div class="col-3 text-right">
