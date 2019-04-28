@@ -10,7 +10,7 @@ class CreateUser < ActiveRecord::Migration[5.2]
       t.datetime :activated_at
       t.string :reset_digest
       t.datetime :reset_sent_at
-      t.integer :role
+      t.integer :role,default: 1
       t.timestamps null: false
     end
     add_index :users, :email

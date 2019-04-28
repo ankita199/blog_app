@@ -1,25 +1,17 @@
 class User < ApplicationRecord
-  has_many :articles, dependent: :destroy
-=begin
-  has_many :active_relationships, class_name:  "Relationship",
-    foreign_key: "follower_id",
-    dependent:   :destroy
-  has_many :following, through: :active_relationships, source: :followed
-  has_many :passive_relationships, class_name:  "Relationship",
-    foreign_key: "followed_id",
-    dependent:   :destroy
-  has_many :followers, through: :passive_relationships, source: :follower
-=end  
+  enum role: [ :admin, :user ]
   attr_accessor :remember_token, :activation_token, :reset_token
+  
+  has_many :articles, dependent: :destroy
   before_save   :downcase_email
   before_create :create_activation_digest
-  validates :name,  presence: true, length: { maximum: 50 }
+  
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\-.]+\.[a-z]+\z/i
-  validates :email, presence: true, length: { maximum: 255 },
-    format: { with: VALID_EMAIL_REGEX },
-    uniqueness: { case_sensitive: false }
-  has_secure_password
+  validates :name,  presence: true, length: { maximum: 50 }
+  validates :email, presence: true, length: { maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
+  
+  has_secure_password
   has_one_attached :avatar
 
   # Returns the hash digest of the given string.
@@ -80,27 +72,12 @@ class User < ApplicationRecord
     reset_sent_at < 2.hours.ago
   end
 
-  # Returns a user's status feed.
-  def feed
-    following_ids_subselect = "SELECT followed_id FROM relationships
-                               WHERE  follower_id = :user_id"
-    Micropost.where("user_id IN (#{following_ids_subselect})
-                     OR user_id = :user_id", user_id: id)
+  def admin?
+    role == "admin"
   end
-
-  # Follows a user.
-  def follow(other_user)
-    active_relationships.create(followed_id: other_user.id)
-  end
-
-  # Unfollows a user.
-  def unfollow(other_user)
-    active_relationships.find_by(followed_id: other_user.id).destroy
-  end
-
-  # Returns true if the current user is following the other user.
-  def following?(other_user)
-    following.include?(other_user)
+  
+  def avatar_image
+    avatar.attahced? ? avatar : "default_user.jpeg"
   end
 
   private

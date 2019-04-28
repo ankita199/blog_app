@@ -1,9 +1,7 @@
 class ArticlesController < ApplicationController
   before_action :logged_in_user, only: [:create, :destroy]
-  before_action :correct_user,   only: :destroy
-
   def index
-    @articles = current_user.articles
+    @articles = Article.all
   end
   
   def new
@@ -14,7 +12,7 @@ class ArticlesController < ApplicationController
     @article = current_user.articles.new(article_params)
     @article.attachment.attach(params[:article][:attachment])
     if @article.save
-      flash[:info] = "Article Createdt."
+      flash[:info] = "Article Created!."
       redirect_to user_path(current_user)
     else
       render 'new'
@@ -26,23 +24,40 @@ class ArticlesController < ApplicationController
   end
 
   def update
+    @article = Article.find(params[:id])
+    @article.attachment.attach(params[:article][:attachment])
+    if @article.update_attributes(article_params)
+      flash[:info] = "Article updated!."
+      redirect_to article_path(@article)
+    else
+      render 'edit'
+    end
   end
   
   def show
-    @article = current_user.articles.find(params[:id])
+    @article = Article.find(params[:id])
     @comments = @article.parent_replies.paginate(page: params[:page], per_page: 5)
-
+  end
+  
+  def destroy
+    if admin_user
+      @article = Article.find(params[:id])
+      @article.destroy
+      flash[:success] = "Article deleted successfully!"
+      redirect_back(fallback_location: root_path)
+    else
+      flash[:error] = "User unauthorised!"
+    end
   end
   
   def load_comments
-    @article = current_user.articles.find(params[:id])
+    @article = Article.find(params[:id])
     if params[:parent_comment_id].present?
       @comments = Comment.replies(params[:parent_comment_id], params[:parent_page])
+      params[:parent_page] = @comments.next_page
     else
       @comments = @article.parent_replies.paginate(page: params[:page], per_page: 5)
     end
-         puts "=============="+@comments.count.to_s
-
   end
   
   private

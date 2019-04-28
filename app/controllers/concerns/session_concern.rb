@@ -58,4 +58,8 @@ module SessionConcern
   def store_location
     session[:forwarding_url] = request.url if request.get?
   end
+  
+  def admin_user
+    current_user && current_user.admin?
+  end
 end

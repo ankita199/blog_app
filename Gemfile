@@ -63,3 +63,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bcrypt'
 gem 'will_paginate'
 gem 'trix'
+gem 'pry', '~> 0.12.2'

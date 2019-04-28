@@ -1,5 +1,4 @@
 <% is_parent_comment = comment.parent_comment_id.blank? %>
-<% comment_replies = Comment.replies(comment.id,params[:parent_page] || 1) %>
 <div data-id="comment-wrapper-<%= comment.id %>">
   <div class="row <%= is_parent_comment ? '' : 'offset-md-1' %>">
     <div class="col-6">
@@ -11,8 +10,8 @@
   <div class="<%= is_parent_comment ? '' : 'offset-md-1' %>">
     <div class="col-10"><%= sanitize comment.content %></div>
   </div>
-  <%= local_assigns.has_key?(:recursive) %>
   <% unless local_assigns.has_key?(:recursive) %>
+    <% comment_replies = Comment.replies(comment.id,params[:parent_page] || 1) %>
     <div data-id="link-wrap-<%= comment.id %>">
       <%= render partial: 'comments/comment', collection: comment_replies,locals: { recursive: true} %>   
     </div>

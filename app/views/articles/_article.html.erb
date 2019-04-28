@@ -1,9 +1,14 @@
 <li id="article-<%= article.id %>">
-  <%#= link_to gravatar_for(article.user, size: 50), article.user %>
-  <span class="user"><%= link_to article.user.name, article.user %></span>
+  <span class="user">
+    <% if current_user.id == article.user.id %>
+      <%= article.user.name %> - 
+    <% else %>
+      <%= link_to article.user.name, article.user %> - 
+    <% end %>
+  </span>
   <span class="content">
     <%= article.title %>
-    <%#= image_tag article.picture.url if article.picture? %>
+    <%= link_to (image_tag article.attachment_image,size: Article::SIZE[:small]),article_path(article) %>
   </span>
   <span class="timestamp">
     Posted <%= time_ago_in_words(article.created_at) %> ago.

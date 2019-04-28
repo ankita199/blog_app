@@ -1,2 +1,21 @@
-<h1>Articles#index</h1>
-<p>Find me in app/views/articles/index.html.erb</p>
+<div class="row">
+  <% @articles.each do |article| %>
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <%= image_tag article.attachment.attached? ? article.attachment : "default_blog.png",class: "article-img" %>
+        <div class="card-body">
+          <p class="card-text article-title"><%= article.title %></p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="btn-group">
+              <%= link_to "Read More", article_path(article), class: "btn btn-sm btn-outline-secondary" %>
+              <% if current_user && current_user.id == article.user_id %>
+                <%= link_to "Edit", edit_article_path(article), class: "btn btn-sm btn-outline-secondary" %>
+              <% end %>
+            </div>
+            <small class="text-muted">Posted <%= time_ago_in_words(article.created_at) %> ago.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
