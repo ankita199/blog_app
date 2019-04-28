@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12 post-title-block">
-        <%= image_tag @article.attachment.attached? ? @article.attachment : "default_blog.png",size: "50x50",class: "position-absolute" %>
+        <%= image_tag @article.attachment_image,{size: Article::SIZE[:small],class: "position-absolute"} %>
         <h1 class="text-center"><%= @article.title  %></h1>
         <div class="list-inline text-center">
             <span><b>Published by: </b><%= @article.user.name %> |</span>
@@ -17,13 +17,16 @@
   </div>
 </section>
 <hr/><h3><b>Comments</b></h3><hr/>
-<div class="container">
-<div data-id="link-wrap">
-  <%= render(@comments) %>
+<div data-id="reply">
+  <%= render partial: "comments/form" %>
 </div>
-<% if @comments.next_page %>
-  <div data-id="comment-more">
-    <%= link_to 'Load More', load_comments_article_path(page: @comments.next_page), remote: true,data: {id: "next-page"} %>
+<div class="container">
+  <div data-id="link-wrap">
+    <%= render(@comments) %>
   </div>
-<% end %>
+  <% if @comments.next_page %>
+    <div data-id="comment-more">
+      <%= link_to 'Load More', article_comments_path(@article.id,page: @comments.next_page), remote: true,data: {id: "next-page"} %>
+    </div>
+  <% end %>
 </div>

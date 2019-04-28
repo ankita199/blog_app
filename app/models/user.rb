@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   enum role: [ :admin, :user ]
+  SIZE = { small: "50x50" }
+
   attr_accessor :remember_token, :activation_token, :reset_token
   
   has_many :articles, dependent: :destroy
@@ -77,7 +79,7 @@ class User < ApplicationRecord
   end
   
   def avatar_image
-    avatar.attahced? ? avatar : "default_user.jpeg"
+    avatar.attahced? ? avatar : "default_user.jpeg" rescue "default_user.jpeg"
   end
 
   private

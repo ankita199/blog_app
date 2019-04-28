@@ -1,0 +1,2 @@
+$("[data-id='comment-form'] [data-id='render-form']").html("");
+$("[data-comment-id="+<%= @parent_comment_id %>+"]").find("[data-id='render-form']").append("<%= j render partial: 'comments/form'  %>")

@@ -3,7 +3,7 @@
   <aside class="col-md-4">
     <section class="user_info">
       <h1>
-        <%= image_tag @user.avatar.attached? ? @user.avatar : "default_user.jpeg",size:"80x80" %>
+        <%= image_tag @user.avatar_image,User::SIZE[:small] %>
         <%= @user.name %>
       </h1>
     </section>

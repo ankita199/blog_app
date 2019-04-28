@@ -1,23 +1,27 @@
 <% is_parent_comment = comment.parent_comment_id.blank? %>
 <div data-id="comment-wrapper-<%= comment.id %>">
-  <div class="row <%= is_parent_comment ? '' : 'offset-md-1' %>">
-    <div class="col-6">
-      <%= image_tag comment.user.avatar.attached? ? comment.user.avatar : "default_user.jpeg",size: "30x30",class: "mr-2" %>
+  <div class="row align-items-center <%= is_parent_comment ? '' : 'offset-md-1' %>">
+    <div class="col-4">
+      <%= image_tag comment.user.avatar_image,{ size: User::SIZE[:small],class: "mr-2"} %>
       <%= comment.user.name %>
     </div>
-    <div class="col-6"> Posted <%= time_ago_in_words(comment.created_at) %> ago.</div>
+    <div class="col-3 text-right">
+      <%= link_to "Reply",new_article_comment_path(@article.id,parent_comment_id: comment.id), data: { id: "reply-box", "db-id": comment.id },remote: true %>
+    </div>
+    <div class="col-5 text-left"> Posted <%= time_ago_in_words(comment.created_at) %> ago.</div>
   </div>
-  <div class="<%= is_parent_comment ? '' : 'offset-md-1' %>">
+  <div data-id="comment-form" data-comment-id="<%= comment.id %>" class="<%= is_parent_comment ? '' : 'offset-md-1' %>">
     <div class="col-10"><%= sanitize comment.content %></div>
+    <div data-id="render-form"></div>
   </div>
   <% unless local_assigns.has_key?(:recursive) %>
     <% comment_replies = Comment.replies(comment.id,params[:parent_page] || 1) %>
     <div data-id="link-wrap-<%= comment.id %>">
       <%= render partial: 'comments/comment', collection: comment_replies,locals: { recursive: true} %>   
     </div>
-    <% if comment_replies.present? %>
+    <% if comment_replies.present? && comment_replies.next_page %>
       <div class="<%= is_parent_comment ? '' : 'offset-md-1' %>" data-id="comment-more-<%= comment.id %>">
-        <%= link_to 'Load More', load_comments_article_path(parent_comment_id: comment.id,parent_page: comment_replies.next_page), remote: true,data: {id: "next-page-#{comment.id}"} %>
+        <%= link_to 'Load More', article_comments_path(@article.id,parent_comment_id: comment.id,parent_page: comment_replies.next_page), remote: true,data: {id: "next-page-#{comment.id}"} %>
       </div>
     <% end %>
   <% end %>

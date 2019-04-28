@@ -7,9 +7,7 @@ Rails.application.routes.draw do
   
   resources :users
   resources :articles do
-    member do
-      get :load_comments
-    end
+    resources :comments
   end
   resources :account_activations, only: [:edit]
   resources :password_resets,     only: [:new, :create, :edit, :update]

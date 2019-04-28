@@ -50,16 +50,6 @@ class ArticlesController < ApplicationController
     end
   end
   
-  def load_comments
-    @article = Article.find(params[:id])
-    if params[:parent_comment_id].present?
-      @comments = Comment.replies(params[:parent_comment_id], params[:parent_page])
-      params[:parent_page] = @comments.next_page
-    else
-      @comments = @article.parent_replies.paginate(page: params[:page], per_page: 5)
-    end
-  end
-  
   private
   
   def article_params

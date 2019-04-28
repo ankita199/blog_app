@@ -1,14 +1,14 @@
 <% if params[:parent_comment_id].present? %>
   $('[data-id="link-wrap-<%= params[:parent_comment_id] %>"]').append('<%= j render(@comments,recursive: true ) %>');
    <% if @comments.next_page %>
-       $('[data-id="next-page-<%= params[:parent_comment_id] %>"]').attr('href','<%= load_comments_article_path(parent_comment_id: params[:parent_comment_id],parent_page: @comments.next_page) %>');
+       $('[data-id="next-page-<%= params[:parent_comment_id] %>"]').attr('href','<%= article_comments_path(@article.id,parent_comment_id: params[:parent_comment_id],parent_page: @comments.next_page) %>');
   <% else %>
     $('[data-id="comment-more-<%= params[:parent_comment_id] %>"]').remove();
   <% end %>
 <% else %>
   $('[data-id="link-wrap"]').append('<%= j render(@comments) %>');
   <% if @comments.next_page %>
-       $('[data-id="next-page"]').attr('href','<%= load_comments_article_path(page: @comments.next_page) %>');
+       $('[data-id="next-page"]').attr('href','<%= article_comments_path(@article.id,page: @comments.next_page) %>');
   <% else %>
     $('[data-id="comment-more"]').remove();
   <% end %>
