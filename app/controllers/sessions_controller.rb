@@ -1,14 +1,15 @@
 class SessionsController < ApplicationController
 
   def new
+    render_bs_modal("login","login")
   end
 
   def create
-    user = User.find_by(email: params[:session][:email])
-    if user && user.authenticate(params[:session][:password])
+    user = User.find_by(email: params[:email])
+    if user && user.authenticate(params[:password])
       if user.activated?
         log_in user
-        params[:session][:remember_me] == '1' ? remember(user) : forget(user)
+        params[:remember_me] == '1' ? remember(user) : forget(user)
         redirect_to user_path(user.id)
       else
         message  = "Account not activated. "
@@ -18,7 +19,7 @@ class SessionsController < ApplicationController
       end
     else
       flash.now[:danger] = 'Invalid email/password combination'
-      render 'new'
+      render_bs_modal("login","login")
     end
   end
 

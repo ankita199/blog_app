@@ -79,7 +79,7 @@ class User < ApplicationRecord
   end
   
   def avatar_image
-    avatar.attahced? ? avatar : "default_user.jpeg" rescue "default_user.jpeg"
+    avatar.attachment && avatar.attached? ? avatar : "default_user.jpeg"
   end
 
   private

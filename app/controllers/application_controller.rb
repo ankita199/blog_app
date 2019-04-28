@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  include SessionConcern
+  include SessionConcern,ModalConcern
   helper_method [:current_user,:logged_in?,:current_user?]
    # Confirms a logged-in user.
     def logged_in_user

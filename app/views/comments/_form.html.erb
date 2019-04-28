@@ -2,13 +2,13 @@
   <%= render 'shared/error_messages', object: f.object %>
   <div class="row form-group align-items-center">
     <div class="col-sm-7">
-      <%= f.text_area "content", class: "form-control" %>
+      <%= f.text_area "content", class: "form-control",required: true %>
     </div>
     <div class="col-sm-3">
       <%= f.submit "Post",class: "btn btn-primary" %>
     </div>
   </div>
-  <%= f.hidden_field "user_id",value: current_user.id %>
+  <%= f.hidden_field "user_id",value: current_user.id unless current_user.nil? %>
   <%= f.hidden_field "article_id",value: @article.id %>
   <%= f.hidden_field "parent_comment_id",value: @parent_comment_id %>
 <% end %>

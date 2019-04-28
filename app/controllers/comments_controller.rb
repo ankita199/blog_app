@@ -15,8 +15,12 @@ class CommentsController < ApplicationController
   end
   
   def create
-    @comment = Comment.create(comment_params)
-    redirect_to article_path(@article)
+    unless current_user
+      render_bs_modal("login","sessions/login")
+    else
+      @comment = Comment.create(comment_params)
+      redirect_to article_path(@article)
+    end
   end
   
   private

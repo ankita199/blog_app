@@ -1,0 +1,29 @@
+<% model_id = @modal_id %>
+<% partial_name = @partial%>
+<% locals = @locals %>
+<% modal_size = @modal_size || "" %>
+<% static = @static %>
+var modal_selector = "div#"+"<%= model_id %>"+".modal";
+var modal_dialog = modal_selector + " .modal-dialog";
+var modal_content = modal_dialog + " .modal-content";
+if ($(modal_selector).length == 0) {
+$( '<div class="modal fade" id="<%= model_id %>"></div>' ).appendTo( "body" );
+$(modal_selector).html('<div class="modal-dialog <%= modal_size %>" role="document"></div>');
+$(modal_dialog).html('<div class="modal-content"></div>');
+}
+$(modal_content).html('<%= j render partial: partial_name, locals: locals %>');
+<% if static %>
+$(modal_selector).modal({
+backdrop: 'static',
+
+keyboard: false
+});
+<% else %>
+$(modal_selector).modal();
+<% end %>
+$('div.modal').not(modal_selector).modal('hide');
+$(modal_selector).modal("show");
+$(modal_selector).on('hide.bs.modal', function () {
+$(this).remove();
+});
+$('.alert.fadeout').delay(6000).fadeOut('slow');

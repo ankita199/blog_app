@@ -1,9 +1,6 @@
 class UsersController < ApplicationController
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy,
-                                        :following, :followers]
-  before_action :correct_user,   only: [:edit, :update]
-  before_action :admin_user,     only: :destroy
-  
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
+
   def index
     @users = User.paginate(page: params[:page])
   end
@@ -15,16 +12,18 @@ class UsersController < ApplicationController
   
   def new
     @user = User.new
+    render_bs_modal("signup","signup")
   end
   
   def create
     @user = User.new(user_params)
+    @user.avatar.attach(params[:user][:avatar])
     if @user.save
       @user.send_activation_email
       flash[:info] = "Please check your email to activate your account."
       redirect_to root_url
     else
-      render 'new'
+      render_bs_modal("signup","signup")
     end
   end
   
@@ -32,6 +31,7 @@ class UsersController < ApplicationController
   end
   
   def update
+    @user.avatar.attach(params[:user][:avatar])
     if @user.update_attributes(user_params)
       flash[:success] = "Profile updated"
       redirect_to @user
@@ -41,16 +41,20 @@ class UsersController < ApplicationController
   end
   
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "User deleted"
-    redirect_to users_url
+    if admin_user
+      User.find(params[:id]).destroy
+      flash[:success] = "User deleted"
+      redirect_to users_url
+    else
+      flash[:error] = "Unauthorized!."
+      redirect_to root_url
+    end
   end
   
   private
     
     def user_params
-      params.require(:user).permit(:name, :email, :password,
-                                   :password_confirmation)
+      params.require(:user).permit(:name, :email, :password, :password_confirmation)
     end
     
     # Before filters
