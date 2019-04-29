@@ -1,5 +1,8 @@
 class ArticlesController < ApplicationController
   before_action :logged_in_user, only: [:create, :destroy]
+  before_action :is_admin?,except: [:index,:show]
+  before_action :set_article,except: [:index,:new,:create]
+  
   def index
     @articles = Article.all
   end
@@ -10,7 +13,6 @@ class ArticlesController < ApplicationController
 
   def create
     @article = current_user.articles.new(article_params)
-    @article.attachment.attach(params[:article][:attachment])
     if @article.save
       flash[:info] = "Article Created!."
       redirect_to user_path(current_user)
@@ -20,12 +22,9 @@ class ArticlesController < ApplicationController
   end
 
   def edit
-    @article = current_user.articles.find(params[:id])
   end
 
   def update
-    @article = Article.find(params[:id])
-    @article.attachment.attach(params[:article][:attachment])
     if @article.update_attributes(article_params)
       flash[:info] = "Article updated!."
       redirect_to article_path(@article)
@@ -35,24 +34,29 @@ class ArticlesController < ApplicationController
   end
   
   def show
-    @article = Article.find(params[:id])
     @comments = @article.parent_replies.paginate(page: params[:page], per_page: 5)
   end
   
   def destroy
-    if admin_user
-      @article = Article.find(params[:id])
-      @article.destroy
-      flash[:success] = "Article deleted successfully!"
-      redirect_back(fallback_location: root_path)
-    else
-      flash[:error] = "User unauthorised!"
-    end
+    @article.destroy
+    flash[:success] = "Article deleted successfully!"
+    redirect_back(fallback_location: root_path)
   end
   
   private
   
+  def is_admin?
+    unless admin_user
+      flash[:danger] = "User unauthorised!"
+      redirect_to root_url
+    end
+  end
+  
   def article_params
-    params.require(:article).permit(:title,:content)
+    params.require(:article).permit(:title,:content,:attachment)
+  end
+  
+  def set_article
+    @article = Article.find(params[:id])
   end
 end
