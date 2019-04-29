@@ -1,6 +1,7 @@
 class Article < ApplicationRecord
   SIZE = { small: "50x50" }
   belongs_to :user
+  has_many :comments, dependent: :destroy
   has_many :parent_replies, -> (parent_comment_id) { where(parent_comment_id: nil) }, class_name: "Comment",foreign_key: "article_id"
   default_scope -> { order('created_at DESC') }
   
